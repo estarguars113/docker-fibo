@@ -5,74 +5,74 @@ class Fib extends Component {
     state = {
         seenIndexes: [],
         values: {},
-        index: ''
+        index: '',
+    };
+
+    componentDidMount() {
+        this.fetchValues();
+        this.fetchIndexes();
     }
-};
 
-componentDidMount() {
-    this.fetchValues();
-    this.fetchIndexes();
-}
+    async fetchValues() {
+        const values = await axios.get('/api/values/current');
+        this.setState({ values: values.data });
+    }
 
-async fetchIndexes() {
-    const values = await axios.get('/api/values/current');
-    this.setState({ values: values.data });
-}
+    async fetchIndexes() {
+        const seenIndexes = await axios.get('/api/values/all');
+        this.setState({ seenIndexes: seenIndexes.data });
+    }
 
-async fetchIndexes() {
-    const seenIndexes = await axios.get('/api/values/all');
-    this.setState({ seenIndexes: seenIndexes.data });
-}
+    handleForm = async (event) => {
+        event.prevenDefault();
 
-handleForm = async (event) => {
-    event.prevenDefault();
+        await axios.post('/api/values', {
+            index: this.state.index
+        });
 
-    await axios.post('/api/values', {
-        index: this.state.index
-    });
+        this.setState({index: ''})
+    }
 
-    this.setState({index: ''})
-}
+    // fetching from postgres(list of number)
+    renderSeenIndexes() {
+        return this.state.seenIndexes.map(
+            ({number}) => number
+        ).join(', ');
+    }
 
-// fetching from postgres(list of number)
-renderSeenIndexes() {
-    return this.state.seenIndexes.map(
-        ({number}) => number
-    ).join(', ');
-}
+    // fetching from redis, dict balues
+    renderValues() {
+        const entries = [];
+        for (let key in this.state.values) {
+            entries.push(
+                <div key={key}>
+                    For index {key} I calculated {this.state.values[key]}
+                </div>
+            );
+        }
+        return entries;
+    }
 
-// fetching from redis, dict balues
-renderValues() {
-    const entries = [];
-    for (let key in this.state.values){
-        entries.push(
-            <div key={key}>
-                For index {key} I calculated {this.state.values[key]}
+    render() {
+        return (
+            <div>
+                <form onSubmit={this.handleForm}>
+                    <label>Enter your index</label>
+                    <input 
+                        value={this.state.index}
+                        onChange={event => this.setState({ index: event.target.value})}
+                    />
+                    <button>Submit</button>
+                </form>
+
+                <h3>Indexed I have seen</h3>
+                {this.renderSeenIndexes()}
+
+                <h3>Calculated Values</h3>
+                {this.renderValues()}
             </div>
-        )
+        );
     }
-    return entries;
-}
-
-render() {
-    return (
-        <div>
-            <form onSubmit={this.handleForm}>
-                <label>Enter your index</label>
-                <input 
-                    value={this.state.index}
-                    onChange={event => this.setState({ index: event.target.value})}
-                />
-                <button>Submit</button>
-            </form>
-
-            <h3>Indexed I have seen</h3>
-            {this.renderSeenIndexes()}
-
-            <h3>Calculated Values</h3>
-            {this.renderValues()}
-        </div>
-    )
 }
 
 export default Fib;
