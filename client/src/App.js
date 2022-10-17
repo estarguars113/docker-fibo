@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 // custom components
 import Fib from './Fib';
@@ -18,11 +18,13 @@ function App() {
         </header>
       </div>
       <div>
-        <Route exact path="/" component={Fib} />
-        <Route exact path="/intro" component={Intro} />
+        <Routes>
+          <Route exact path="/" component={Fib} />
+          <Route exact path="/intro" component={Intro} />
+        </Routes>
       </div>
     </Router>
-    
+
   );
 }
 
