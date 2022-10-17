@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default () => {
+const intro = () => {
     return (
         <div>
             <p>
@@ -10,4 +10,5 @@ export default () => {
             </p>
         </div>
     )
-};
+}
+export default intro;

@@ -9,12 +9,15 @@ services:
     image: 'redis:latest'
 
   nginx:
+    depends_on:
+      - api
+      - client
     restart: always
     build:
       dockerfile: Dockerfile.dev
       context: ./nginx
     ports:
-      - '8080:80'
+      - '3050:80'
 
   api:
     build:
@@ -25,7 +28,8 @@ services:
       - /app/node_modules # keep as it's
       - ./server:/app # alias to server folder
 
-    environment: #if you leave just variable name without value is going to try to match with environment passwords defined locally
+    environment:
+      #if you leave just variable name without value is going to try to match with environment passwords defined locally
       - REDIS_HOST=redis
       - REDIS_PORT=6379 # default exposed port on redis image
       - PGUSER=postgres # according default values in postgres image
@@ -36,8 +40,8 @@ services:
 
   client:
     build:
-        dockerfile: Dockerfile.dev
-        context: ./client
+      dockerfile: Dockerfile.dev
+      context: ./client
 
     volumes:
       - /app/node_modules
@@ -45,14 +49,9 @@ services:
 
   worker:
     build:
-        dockerfile: Dockerfile.dev
-        context: ./worker
+      dockerfile: Dockerfile.dev
+      context: ./worker
 
     volumes:
       - /app/node_modules
       - ./worker:/app
-
-
-    
-
-  
