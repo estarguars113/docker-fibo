@@ -39,6 +39,8 @@ services:
       - PGPORT=5432
 
   client:
+    environment:
+      - WDS_SOCKET_PORT=0
     build:
       dockerfile: Dockerfile.dev
       context: ./client

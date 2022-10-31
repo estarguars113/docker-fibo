@@ -5,7 +5,7 @@ class Fib extends Component {
     state = {
         seenIndexes: [],
         values: {},
-        index: '',
+        index: ''
     };
 
     componentDidMount() {
@@ -20,29 +20,27 @@ class Fib extends Component {
 
     async fetchIndexes() {
         const seenIndexes = await axios.get('/api/values/all');
-        this.setState({ seenIndexes: seenIndexes.data });
+        this.setState({
+            seenIndexes: seenIndexes.data
+        });
     }
 
-    handleForm = async (event) => {
-        event.prevenDefault();
+    handleSubmit = async event => {
+        event.preventDefault();
 
         await axios.post('/api/values', {
             index: this.state.index
         });
+        this.setState({ index: '' });
+    };
 
-        this.setState({index: ''})
-    }
-
-    // fetching from postgres(list of number)
     renderSeenIndexes() {
-        return this.state.seenIndexes.map(
-            ({number}) => number
-        ).join(', ');
+        return this.state.seenIndexes.map(({ number }) => number).join(', ');
     }
 
-    // fetching from redis, dict balues
     renderValues() {
         const entries = [];
+
         for (let key in this.state.values) {
             entries.push(
                 <div key={key}>
@@ -50,25 +48,26 @@ class Fib extends Component {
                 </div>
             );
         }
+
         return entries;
     }
 
     render() {
         return (
             <div>
-                <form onSubmit={this.handleForm}>
-                    <label>Enter your index</label>
-                    <input 
+                <form onSubmit={this.handleSubmit}>
+                    <label>Enter your index:</label>
+                    <input
                         value={this.state.index}
-                        onChange={event => this.setState({ index: event.target.value})}
+                        onChange={event => this.setState({ index: event.target.value })}
                     />
                     <button>Submit</button>
                 </form>
 
-                <h3>Indexed I have seen</h3>
+                <h3>Indexes I have seen:</h3>
                 {this.renderSeenIndexes()}
 
-                <h3>Calculated Values</h3>
+                <h3>Calculated Values:</h3>
                 {this.renderValues()}
             </div>
         );

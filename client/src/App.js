@@ -19,7 +19,7 @@ function App() {
       </div>
       <div>
         <Routes>
-          <Route exact path="/" component={Fib} />
+          <Route exact path="/" element={<Fib />} />
           <Route exact path="/intro" component={Intro} />
         </Routes>
       </div>
